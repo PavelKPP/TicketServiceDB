@@ -1,6 +1,7 @@
 package com.ticketservice.dao.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -62,5 +63,14 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, creationDateTime);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", creationDateTime=" + creationDateTime +
+                '}';
     }
 }
