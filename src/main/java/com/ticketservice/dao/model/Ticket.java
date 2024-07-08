@@ -1,21 +1,26 @@
 package com.ticketservice.dao.model;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.boot.model.relational.SqlStringGenerationContext;
+import org.hibernate.type.SqlTypes;
 
-import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 @Entity
 @Table(name = "TicketTable")
-public class Ticket {
+public class Ticket implements Serializable {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @JdbcTypeCode(SqlTypes.JSON)
     @JoinColumn(name = "id")
+    @Column(insertable=false, updatable=false)
+    @ManyToOne
     private User user_id;
 
     @Column(name = "ticket_type")

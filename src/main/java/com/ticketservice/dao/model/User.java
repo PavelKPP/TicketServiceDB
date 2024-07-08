@@ -1,6 +1,7 @@
 package com.ticketservice.dao.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -16,6 +17,8 @@ public class User {
     private String name;
     @Column(name = "creation_date")
     private Timestamp creationDateTime;
+    @Column
+    private boolean activated;
 
     public User(){
 
@@ -51,6 +54,14 @@ public class User {
         this.creationDateTime = creationDateTime;
     }
 
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
@@ -62,5 +73,14 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, creationDateTime);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", creationDateTime=" + creationDateTime +
+                '}';
     }
 }

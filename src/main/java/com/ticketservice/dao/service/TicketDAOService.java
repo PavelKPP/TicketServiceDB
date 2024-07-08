@@ -2,8 +2,9 @@ package com.ticketservice.dao.service;
 
 import com.ticketservice.dao.model.Ticket;
 import com.ticketservice.dao.model.User;
-import com.ticketservice.dao.util.ConnectionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -12,9 +13,16 @@ public class TicketDAOService {
     private static Connection connection = null;
     PreparedStatement preparedStatement = null;
 
+    private final DataSource dataSource;
+
+    @Autowired
+    public TicketDAOService(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     public void saveTicket(Ticket ticket) {
-        connection = ConnectionManager.getConnection();
         try {
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement("insert into TicketTable (id, user_id, ticketType, creationDate) values (?, ?, ?, ?)");
             preparedStatement.setLong(1, ticket.getId());
             preparedStatement.setLong(2, ticket.getUser_id().getId());
@@ -34,8 +42,8 @@ public class TicketDAOService {
     }
 
     public void getTicketByTicketId(int id) {
-        connection = ConnectionManager.getConnection();
         try{
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement("select * from TicketTable where id = ?");
             preparedStatement.setLong(1, id);
 
@@ -51,8 +59,10 @@ public class TicketDAOService {
         }
     }
 
+
     public void getTicketByUserId(int id) {
         try {
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement("select * from TicketTable where user_id = ?");
             preparedStatement.setLong(1, id);
 
@@ -72,8 +82,8 @@ public class TicketDAOService {
 
     public void updateTicketType(String typeOfTicketToBeUpdated,
                                  String typeOfTicketValueToBeUpdatedTo) {
-        connection = ConnectionManager.getConnection();
         try {
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement("update TicketTable set ticket_type = ? where ticket_type = ?");
             preparedStatement.setString(1, typeOfTicketToBeUpdated);
             preparedStatement.setString(2, typeOfTicketValueToBeUpdatedTo);
