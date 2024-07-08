@@ -20,6 +20,7 @@ public class Ticket implements Serializable {
     @JdbcTypeCode(SqlTypes.JSON)
     @JoinColumn(name = "id")
     @Column(insertable=false, updatable=false)
+    @ManyToOne
     private User user_id;
 
     @Column(name = "ticket_type")

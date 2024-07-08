@@ -6,11 +6,15 @@ import com.ticketservice.dao.service.UserDAOService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
 @Configuration
+@EnableTransactionManagement
 @ComponentScan(basePackages = "com.ticketservice.dao")
 public class SpringConfig {
 
@@ -23,6 +27,13 @@ public class SpringConfig {
         driverManagerDataSource.setPassword("password");
 
         return driverManagerDataSource;
+    }
+
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager platformTransactionManager() {
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        dataSourceTransactionManager.setDataSource(dataSource());
+        return dataSourceTransactionManager;
     }
 
 

@@ -3,21 +3,26 @@ package com.ticketservice.dao.service;
 import com.ticketservice.dao.model.Ticket;
 import com.ticketservice.dao.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public class UserDAOService {
     Connection connection = null;
     PreparedStatement preparedStatement = null;
     private final DataSource dataSource;
+    private TicketDAOService ticketDAOService;
 
     @Autowired
     public UserDAOService(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
+
 
     public void saveUser(User user) {
         try {
@@ -64,6 +69,22 @@ public class UserDAOService {
             preparedStatement.setLong(1, id);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Transactional
+    public void activateUserById(User id, Long ticketId, String ticketType) {
+        try{
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("update usertable set activated = true where id = ?");
+            preparedStatement.setObject(1, id);
+            Ticket ticket = new Ticket();
+            ticket.setId(ticketId);
+            ticket.setUser_id(id);
+            ticket.setTicketType(ticketType);
+            ticketDAOService.saveTicket(ticket);
+        } catch (SQLException e) {
+            throw new RuntimeException();
         }
     }
 }

@@ -6,6 +6,7 @@ import com.ticketservice.dao.spring.SpringConfig;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+
 public class TestSpringMainClass {
 
     public static void main(String[] args) {

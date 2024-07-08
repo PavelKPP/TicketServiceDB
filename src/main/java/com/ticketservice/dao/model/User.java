@@ -17,6 +17,8 @@ public class User {
     private String name;
     @Column(name = "creation_date")
     private Timestamp creationDateTime;
+    @Column
+    private boolean activated;
 
     public User(){
 
@@ -50,6 +52,14 @@ public class User {
 
     public void setCreationDateTime(Timestamp creationDateTime) {
         this.creationDateTime = creationDateTime;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
     }
 
     @Override
