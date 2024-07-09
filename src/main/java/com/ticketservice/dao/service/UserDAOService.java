@@ -1,8 +1,11 @@
 package com.ticketservice.dao.service;
 
+import com.ticketservice.dao.exceptions.MethodIsLockedByPropertyException;
 import com.ticketservice.dao.model.Ticket;
 import com.ticketservice.dao.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -16,10 +19,12 @@ public class UserDAOService {
     PreparedStatement preparedStatement = null;
     private final DataSource dataSource;
     private TicketDAOService ticketDAOService;
+    private final Environment environment;
 
     @Autowired
-    public UserDAOService(DataSource dataSource) {
+    public UserDAOService(DataSource dataSource, Environment environment) {
         this.dataSource = dataSource;
+        this.environment = environment;
     }
 
 
@@ -72,19 +77,25 @@ public class UserDAOService {
         }
     }
 
+
     @Transactional
     public void activateUserById(User id, Long ticketId, String ticketType) {
-        try{
-            connection = dataSource.getConnection();
-            preparedStatement = connection.prepareStatement("update usertable set activated = true where id = ?");
-            preparedStatement.setObject(1, id);
-            Ticket ticket = new Ticket();
-            ticket.setId(ticketId);
-            ticket.setUser_id(id);
-            ticket.setTicketType(ticketType);
-            ticketDAOService.saveTicket(ticket);
-        } catch (SQLException e) {
-            throw new RuntimeException();
+        String property = environment.getProperty("app.functions.activateUserById");
+        if (property != null && property.equals("true")) {
+            try {
+                connection = dataSource.getConnection();
+                preparedStatement = connection.prepareStatement("update usertable set activated = true where id = ?");
+                preparedStatement.setObject(1, id);
+                Ticket ticket = new Ticket();
+                ticket.setId(ticketId);
+                ticket.setUser_id(id);
+                ticket.setTicketType(ticketType);
+                ticketDAOService.saveTicket(ticket);
+            } catch (SQLException e) {
+                throw new RuntimeException();
+            }
+        } else {
+            throw new MethodIsLockedByPropertyException("this method has been locked by 'application.properties'");
         }
     }
 }
