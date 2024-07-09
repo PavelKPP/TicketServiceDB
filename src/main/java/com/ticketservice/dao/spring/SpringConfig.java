@@ -3,9 +3,12 @@ package com.ticketservice.dao.spring;
 
 import com.ticketservice.dao.service.TicketDAOService;
 import com.ticketservice.dao.service.UserDAOService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -16,7 +19,9 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "com.ticketservice.dao")
+@PropertySource("application.properties")
 public class SpringConfig {
+
 
     @Bean
     public DataSource dataSource() {
@@ -36,15 +41,14 @@ public class SpringConfig {
         return dataSourceTransactionManager;
     }
 
-
     @Bean
     public TicketDAOService ticketDAOService(DataSource dataSource) {
         return new TicketDAOService(dataSource);
     }
 
     @Bean
-    public UserDAOService userDAOService(DataSource dataSource) {
-        return new UserDAOService(dataSource);
+    public UserDAOService userDAOService(DataSource dataSource, Environment environment) {
+        return new UserDAOService(dataSource, environment);
     }
 
 }
